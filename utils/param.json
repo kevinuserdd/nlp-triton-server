@@ -1,0 +1,7 @@
+{
+  "pretrained_model": "/utils/bert_base_chinese",
+  "tag2id": "/utils/label.json",
+  "max_seq_len": 384,
+  "max_role_seq":256,
+  "schema_dir":"/utils/event_schema.json"
+}

@@ -1,0 +1,30 @@
+name: "role_preprocess"
+backend: "python"
+max_batch_size: 32
+input [
+  {
+    name: "ROLE_RAW_TEXT"
+    data_type: TYPE_STRING
+    dims: [ -1 ]
+  }
+]
+output [
+  {
+    name: "ROLE_INPUT_IDS"
+    data_type: TYPE_INT64
+    dims: [ 256 ]
+   },
+
+  {
+    name: "ROLE_MASKS"
+    data_type: TYPE_INT64
+    dims: [ 256 ]
+  },
+  {
+    name: "LENGTHS"
+    data_type: TYPE_INT64
+    dims: [ -1 ]
+   }
+]
+ 
+instance_group [{ kind: KIND_CPU }]

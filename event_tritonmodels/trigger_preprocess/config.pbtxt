@@ -1,0 +1,24 @@
+name: "trigger_preprocess"
+backend: "python"
+max_batch_size: 32
+input [
+  {
+    name: "RAW_TEXT"
+    data_type: TYPE_STRING
+    dims: [ -1 ]
+  }
+]
+output [
+  {
+    name: "INPUT_IDS"
+    data_type: TYPE_INT64
+    dims: [ 384 ]
+   },
+  {
+    name: "MASKS"
+    data_type: TYPE_INT64
+    dims: [ 384 ]
+   }
+]
+ 
+instance_group [{ kind: KIND_CPU }]

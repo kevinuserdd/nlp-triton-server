@@ -1,0 +1,113 @@
+name: "role_ensemble"
+platform:"ensemble"
+max_batch_size: 32
+input [
+  {
+    name: "TEXT"
+    data_type: TYPE_STRING
+    dims: [ -1 ]
+  }
+]
+output [
+  {
+    name: "event_list"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+ensemble_scheduling {
+  step [
+    {
+      model_name: "trigger_preprocess"
+      model_version: -1
+      input_map {
+        key: "RAW_TEXT"
+        value: "TEXT"
+      }
+      output_map {
+        key: "INPUT_IDS"
+        value: "trigger_input_ids"
+      }
+      output_map {
+        key: "MASKS"
+        value: "trigger_input_masks"
+      }
+    },
+    {
+      model_name: "role_preprocess"
+      model_version: -1
+      input_map {
+        key: "ROLE_RAW_TEXT"
+        value: "TEXT"
+      }
+      output_map {
+        key: "ROLE_INPUT_IDS"
+        value: "role_input_ids"
+      }
+      output_map {
+        key: "ROLE_MASKS"
+        value: "role_input_masks"
+      }
+      output_map {
+        key: "LENGTHS"
+       value: "role_input_lengths"
+     }
+    },
+    {
+      model_name: "trigger-onnx"
+      model_version: -1
+      input_map {
+        key: "input__0"
+        value: "trigger_input_ids"
+      }
+      input_map {
+        key: "input__1"
+        value: "trigger_input_masks"
+      }
+      output_map {
+        key: "output__0"
+        value: "trigger_output"
+      }
+    },
+    {
+      model_name: "role-onnx"
+      model_version: -1
+      input_map {
+        key: "input__0"
+        value: "role_input_ids"
+      }
+      input_map {
+        key: "input__1"
+        value: "role_input_masks"
+      }
+      output_map {
+        key: "output__0"
+        value: "role_output"
+      }
+    },
+    {
+      model_name: "role_postprocess"
+      model_version: -1
+      input_map {
+        key: "TEXT"
+        value: "TEXT"
+      }
+      input_map {
+        key: "TRIGGER_OUTPUT_TENSOR"
+        value: "trigger_output"
+      }
+      input_map {
+        key: "ROLE_OUTPUT_TENSOR"
+        value: "role_output"
+      }
+      input_map {
+        key: "LENGTHS"
+        value: "role_input_lengths"
+      }
+      output_map {
+        key: "EVENT_LABEL_OUTPUT"
+        value: "event_list"
+      }
+    }
+  ]
+}
